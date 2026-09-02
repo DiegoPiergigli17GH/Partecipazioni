@@ -30,8 +30,9 @@ export async function POST(request: Request) {
     return Response.json({ rsvp });
   } catch (error) {
     console.error("Failed to save RSVP", error);
+    const detail = error instanceof Error ? error.message : "errore sconosciuto";
     return Response.json(
-      { error: "Non sono riuscito a salvare la pergamena. Riprova." },
+      { error: "Non sono riuscito a salvare la pergamena. Riprova.", detail },
       { status: 500 },
     );
   }

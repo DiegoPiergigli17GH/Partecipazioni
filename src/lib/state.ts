@@ -27,17 +27,6 @@ export function wantsBlobStore(): boolean {
   return Boolean(envFlag("BLOB_READ_WRITE_TOKEN") || envFlag("BLOB_STORE_ID"));
 }
 
-function blobAuth() {
-  const storeId = envFlag("BLOB_STORE_ID");
-  const token = envFlag("BLOB_READ_WRITE_TOKEN");
-  const oidcToken = envFlag("VERCEL_OIDC_TOKEN");
-  return {
-    ...(storeId ? { storeId } : {}),
-    ...(token ? { token } : {}),
-    ...(oidcToken ? { oidcToken } : {}),
-  };
-}
-
 export function currentPersistence(): PersistenceMode {
   if (blobOk === true) {
     return "blob";
@@ -152,7 +141,6 @@ async function readFromBlob(): Promise<AppState | null> {
     const result = await get(BLOB_PATH, {
       access: "private",
       useCache: false,
-      ...blobAuth(),
     });
     if (!result || result.statusCode !== 200 || !result.stream) {
       return null;
@@ -180,7 +168,6 @@ async function writeToBlob(state: AppState) {
     allowOverwrite: true,
     addRandomSuffix: false,
     contentType: "application/json",
-    ...blobAuth(),
   });
 }
 
