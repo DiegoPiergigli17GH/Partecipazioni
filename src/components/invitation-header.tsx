@@ -56,7 +56,7 @@ export function CastleNote() {
         dell&apos;ex Why Not, per non fomentare il caos lungo la via del
         castello.
       </p>
-      <p>Chi si presenta a cavallo può parcheggiare nel cortile del castello.</p>
+      <p>Chi si presenta a cavallo può stallarlo direttamente in cortile.</p>
     </div>
   )
 }

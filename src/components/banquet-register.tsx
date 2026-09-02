@@ -104,7 +104,7 @@ export function BanquetRegister() {
                 Nessuna presenza annotata. Il registro attende la prima pergamena.
               </p>
             ) : (
-              <ul className="space-y-2">
+              <ul className="max-h-[min(24rem,60vh)] space-y-2 overflow-y-auto">
                 {guests.map((guest, index) => (
                   <li
                     key={`${guest.name}-${index}`}
