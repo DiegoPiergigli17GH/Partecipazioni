@@ -3,7 +3,7 @@ import path from "path";
 import { BlobNotFoundError, get, put } from "@vercel/blob";
 
 import { DEFAULT_EVENT } from "@/lib/defaults";
-import type { AppState, EventInfo, PersistenceMode } from "@/lib/types";
+import type { AppState, EventInfo, PersistenceMode, Rsvp } from "@/lib/types";
 
 const DATA_DIR = path.join(process.cwd(), "data");
 const STATE_FILE = path.join(DATA_DIR, "state.json");
@@ -15,22 +15,18 @@ let blobOk: boolean | null = null;
 let memoryState: AppState | null = null;
 
 export function wantsBlobStore(): boolean {
-  return Boolean(
-    process.env.BLOB_READ_WRITE_TOKEN ||
-      process.env.BLOB_STORE_ID ||
-      process.env.VERCEL,
-  );
+  return Boolean(process.env.BLOB_READ_WRITE_TOKEN || process.env.BLOB_STORE_ID);
 }
 
 export function currentPersistence(): PersistenceMode {
   if (blobOk === true) {
     return "blob";
   }
-  if (wantsBlobStore() && blobOk === false) {
-    return "ephemeral";
-  }
-  if (wantsBlobStore()) {
+  if (wantsBlobStore() && blobOk !== false) {
     return "blob";
+  }
+  if (process.env.VERCEL) {
+    return "ephemeral";
   }
   return "file";
 }
@@ -49,6 +45,38 @@ export function sanitizeEvent(value: Partial<EventInfo> | null | undefined): Eve
 
 export function emptyState(): AppState {
   return { event: sanitizeEvent(DEFAULT_EVENT), rsvps: [] };
+}
+
+function cloneState(state: AppState): AppState {
+  return {
+    event: sanitizeEvent(state.event),
+    rsvps: Array.isArray(state.rsvps) ? state.rsvps.map((row) => ({ ...row })) : [],
+  };
+}
+
+function unionRsvps(...lists: Array<Rsvp[] | undefined>): Rsvp[] {
+  const byId = new Map<string, Rsvp>();
+  for (const list of lists) {
+    for (const row of list ?? []) {
+      if (!row?.id) {
+        continue;
+      }
+      const prev = byId.get(row.id);
+      if (!prev || String(row.updatedAt ?? "") > String(prev.updatedAt ?? "")) {
+        byId.set(row.id, { ...row });
+      }
+    }
+  }
+  return [...byId.values()].sort((a, b) => String(a.createdAt).localeCompare(String(b.createdAt)));
+}
+
+function preferEvent(...events: Array<EventInfo | undefined>): EventInfo {
+  for (const event of events) {
+    if (event) {
+      return sanitizeEvent(event);
+    }
+  }
+  return sanitizeEvent(DEFAULT_EVENT);
 }
 
 async function ensureDataDir() {
@@ -74,7 +102,7 @@ async function writeJsonFile(file: string, value: unknown) {
   await fs.rename(tmp, file);
 }
 
-async function readFromDisk(): Promise<AppState> {
+async function readFromDisk(): Promise<AppState | null> {
   const combined = await readJsonFile<AppState>(STATE_FILE);
   if (combined && typeof combined === "object") {
     return {
@@ -83,24 +111,31 @@ async function readFromDisk(): Promise<AppState> {
     };
   }
 
-  const event = sanitizeEvent((await readJsonFile<EventInfo>(EVENT_FILE)) ?? DEFAULT_EVENT);
-  const rsvps = (await readJsonFile<AppState["rsvps"]>(RSVP_FILE)) ?? [];
-  return { event, rsvps: Array.isArray(rsvps) ? rsvps : [] };
+  const eventFile = await readJsonFile<EventInfo>(EVENT_FILE);
+  const rsvpFile = await readJsonFile<AppState["rsvps"]>(RSVP_FILE);
+  if (!eventFile && !rsvpFile) {
+    return null;
+  }
+
+  return {
+    event: sanitizeEvent(eventFile ?? DEFAULT_EVENT),
+    rsvps: Array.isArray(rsvpFile) ? rsvpFile : [],
+  };
 }
 
 async function writeToDisk(state: AppState) {
   await writeJsonFile(STATE_FILE, state);
 }
 
-async function readFromBlob(): Promise<AppState> {
+async function readFromBlob(): Promise<AppState | null> {
   try {
     const result = await get(BLOB_PATH, { access: "private", useCache: false });
     if (!result || result.statusCode !== 200 || !result.stream) {
-      return emptyState();
+      return null;
     }
     const text = await new Response(result.stream).text();
     if (!text.trim()) {
-      return emptyState();
+      return null;
     }
     const parsed = JSON.parse(text) as AppState;
     return {
@@ -109,7 +144,7 @@ async function readFromBlob(): Promise<AppState> {
     };
   } catch (error) {
     if (error instanceof BlobNotFoundError) {
-      return emptyState();
+      return null;
     }
     throw error;
   }
@@ -125,32 +160,45 @@ async function writeToBlob(state: AppState) {
 }
 
 function remember(state: AppState): AppState {
-  memoryState = {
-    event: sanitizeEvent(state.event),
-    rsvps: Array.isArray(state.rsvps) ? state.rsvps : [],
-  };
+  memoryState = cloneState(state);
   return memoryState;
 }
 
 export async function loadState(): Promise<AppState> {
+  let fromBlob: AppState | null = null;
+  let fromDisk: AppState | null = null;
+
   if (wantsBlobStore()) {
     try {
-      const state = await readFromBlob();
+      fromBlob = await readFromBlob();
       blobOk = true;
-      return remember(state);
     } catch {
       blobOk = false;
-      if (memoryState) {
-        return memoryState;
-      }
     }
   }
 
   try {
-    return remember(await readFromDisk());
+    fromDisk = await readFromDisk();
   } catch {
-    return memoryState ?? emptyState();
+    fromDisk = null;
   }
+
+  const next: AppState = {
+    event: preferEvent(fromBlob?.event, memoryState?.event, fromDisk?.event),
+    rsvps: unionRsvps(fromBlob?.rsvps, memoryState?.rsvps, fromDisk?.rsvps),
+  };
+
+  remember(next);
+
+  if (blobOk === true && next.rsvps.length > (fromBlob?.rsvps.length ?? 0)) {
+    try {
+      await writeToBlob(next);
+    } catch {
+      blobOk = false;
+    }
+  }
+
+  return cloneState(next);
 }
 
 export async function saveState(state: AppState): Promise<void> {
@@ -160,7 +208,6 @@ export async function saveState(state: AppState): Promise<void> {
     try {
       await writeToBlob(state);
       blobOk = true;
-      return;
     } catch {
       blobOk = false;
     }
@@ -169,8 +216,12 @@ export async function saveState(state: AppState): Promise<void> {
   try {
     await writeToDisk(state);
   } catch (error) {
-    if (!wantsBlobStore()) {
-      throw error;
+    if (blobOk === true) {
+      return;
     }
+    if (process.env.VERCEL) {
+      return;
+    }
+    throw error;
   }
 }

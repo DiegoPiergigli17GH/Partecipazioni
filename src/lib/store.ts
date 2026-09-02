@@ -27,6 +27,11 @@ export function persistenceMode(): PersistenceMode {
   return currentPersistence();
 }
 
+export async function probePersistence(): Promise<PersistenceMode> {
+  await withLock(loadState);
+  return currentPersistence();
+}
+
 export async function getEvent() {
   const state = await withLock(loadState);
   return state.event;

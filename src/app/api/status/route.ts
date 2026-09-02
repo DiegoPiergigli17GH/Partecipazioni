@@ -1,11 +1,11 @@
-import { persistenceMode } from "@/lib/store";
+import { probePersistence } from "@/lib/store";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
 export async function GET() {
   return Response.json({
-    persistence: persistenceMode(),
+    persistence: await probePersistence(),
     vercel: process.env.VERCEL === "1",
   });
 }
