@@ -42,3 +42,10 @@ export type Totals = {
   vegetarian: number;
   beers: number;
 };
+
+export type AppState = {
+  event: EventInfo;
+  rsvps: Rsvp[];
+};
+
+export type PersistenceMode = "file" | "blob" | "ephemeral";

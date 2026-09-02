@@ -1,19 +1,5 @@
-import { promises as fs } from "fs";
-import path from "path";
-
-import { DEFAULT_EVENT } from "@/lib/defaults";
-import type {
-  EventInfo,
-  EventPatch,
-  PublicEvent,
-  Rsvp,
-  RsvpInput,
-  Totals,
-} from "@/lib/types";
-
-const DATA_DIR = path.join(process.cwd(), "data");
-const EVENT_FILE = path.join(DATA_DIR, "event.json");
-const RSVP_FILE = path.join(DATA_DIR, "rsvps.json");
+import { currentPersistence, loadState, saveState, sanitizeEvent } from "@/lib/state";
+import type { EventPatch, PersistenceMode, PublicEvent, Rsvp, RsvpInput, Totals } from "@/lib/types";
 
 let queue: Promise<unknown> = Promise.resolve();
 
@@ -26,42 +12,7 @@ function withLock<T>(fn: () => Promise<T>): Promise<T> {
   return run;
 }
 
-async function ensureDataDir() {
-  await fs.mkdir(DATA_DIR, { recursive: true });
-}
-
-async function readJsonFile<T>(file: string, fallback: T): Promise<T> {
-  try {
-    const raw = await fs.readFile(file, "utf8");
-    return JSON.parse(raw) as T;
-  } catch (error) {
-    if ((error as NodeJS.ErrnoException).code === "ENOENT") {
-      return fallback;
-    }
-    throw error;
-  }
-}
-
-async function writeJsonFile(file: string, value: unknown) {
-  await ensureDataDir();
-  const tmp = `${file}.${process.pid}.tmp`;
-  await fs.writeFile(tmp, `${JSON.stringify(value, null, 2)}\n`, "utf8");
-  await fs.rename(tmp, file);
-}
-
-function sanitizeEvent(value: Partial<EventInfo> | null | undefined): EventInfo {
-  return {
-    title: String(value?.title ?? DEFAULT_EVENT.title).trim() || DEFAULT_EVENT.title,
-    host: String(value?.host ?? DEFAULT_EVENT.host).trim() || DEFAULT_EVENT.host,
-    date: String(value?.date ?? DEFAULT_EVENT.date).trim() || DEFAULT_EVENT.date,
-    time: String(value?.time ?? DEFAULT_EVENT.time).trim(),
-    place: String(value?.place ?? DEFAULT_EVENT.place).trim(),
-    note: String(value?.note ?? DEFAULT_EVENT.note).trim(),
-    pin: String(value?.pin ?? DEFAULT_EVENT.pin).trim() || DEFAULT_EVENT.pin,
-  };
-}
-
-export function toPublicEvent(event: EventInfo): PublicEvent {
+export function toPublicEvent(event: { title: string; host: string; date: string; time: string; place: string; note: string }): PublicEvent {
   return {
     title: event.title,
     host: event.host,
@@ -72,26 +23,27 @@ export function toPublicEvent(event: EventInfo): PublicEvent {
   };
 }
 
-export async function getEvent(): Promise<EventInfo> {
-  return withLock(async () => sanitizeEvent(await readJsonFile<EventInfo>(EVENT_FILE, DEFAULT_EVENT)));
+export function persistenceMode(): PersistenceMode {
+  return currentPersistence();
 }
 
-export async function updateEvent(patch: EventPatch): Promise<EventInfo> {
+export async function getEvent() {
+  const state = await withLock(loadState);
+  return state.event;
+}
+
+export async function updateEvent(patch: EventPatch) {
   return withLock(async () => {
-    const current = sanitizeEvent(await readJsonFile<EventInfo>(EVENT_FILE, DEFAULT_EVENT));
-    const next = sanitizeEvent({ ...current, ...patch });
-    await writeJsonFile(EVENT_FILE, next);
-    return next;
+    const state = await loadState();
+    state.event = sanitizeEvent({ ...state.event, ...patch });
+    await saveState(state);
+    return state.event;
   });
 }
 
-async function readRsvpsUnlocked(): Promise<Rsvp[]> {
-  const rows = await readJsonFile<Rsvp[]>(RSVP_FILE, []);
-  return Array.isArray(rows) ? rows : [];
-}
-
 export async function listRsvps(): Promise<Rsvp[]> {
-  return withLock(readRsvpsUnlocked);
+  const state = await withLock(loadState);
+  return state.rsvps;
 }
 
 export async function getRsvp(id: string): Promise<Rsvp | null> {
@@ -101,9 +53,9 @@ export async function getRsvp(id: string): Promise<Rsvp | null> {
 
 export async function upsertRsvp(id: string | null, input: RsvpInput): Promise<Rsvp> {
   return withLock(async () => {
-    const rows = await readRsvpsUnlocked();
+    const state = await loadState();
     const now = new Date().toISOString();
-    const existing = id ? rows.find((row) => row.id === id) : undefined;
+    const existing = id ? state.rsvps.find((row) => row.id === id) : undefined;
 
     const record: Rsvp = {
       id: existing?.id ?? crypto.randomUUID(),
@@ -116,23 +68,24 @@ export async function upsertRsvp(id: string | null, input: RsvpInput): Promise<R
       updatedAt: now,
     };
 
-    const next = existing
-      ? rows.map((row) => (row.id === existing.id ? record : row))
-      : [...rows, record];
+    state.rsvps = existing
+      ? state.rsvps.map((row) => (row.id === existing.id ? record : row))
+      : [...state.rsvps, record];
 
-    await writeJsonFile(RSVP_FILE, next);
+    await saveState(state);
     return record;
   });
 }
 
 export async function deleteRsvp(id: string): Promise<boolean> {
   return withLock(async () => {
-    const rows = await readRsvpsUnlocked();
-    const next = rows.filter((row) => row.id !== id);
-    if (next.length === rows.length) {
+    const state = await loadState();
+    const next = state.rsvps.filter((row) => row.id !== id);
+    if (next.length === state.rsvps.length) {
       return false;
     }
-    await writeJsonFile(RSVP_FILE, next);
+    state.rsvps = next;
+    await saveState(state);
     return true;
   });
 }

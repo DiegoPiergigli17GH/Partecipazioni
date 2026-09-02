@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState, type FormEvent, type ReactNode } from "react";
+import { useEffect, useMemo, useState, useSyncExternalStore, type FormEvent, type ReactNode } from "react";
 import Link from "next/link";
 import {
   BeerIcon,
@@ -20,6 +20,19 @@ import { Textarea } from "@/components/ui/textarea";
 import { beerLabel, formatDateTime } from "@/lib/format";
 import type { PublicEvent, Rsvp, Totals } from "@/lib/types";
 
+function subscribeShareable() {
+  return () => undefined;
+}
+
+function shareableSnapshot() {
+  const host = window.location.hostname;
+  return host !== "localhost" && host !== "127.0.0.1";
+}
+
+function shareableServerSnapshot() {
+  return true;
+}
+
 type Dashboard = {
   event: PublicEvent;
   rsvps: Rsvp[];
@@ -36,7 +49,9 @@ export function OrganizerApp() {
   const [pending, setPending] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [notice, setNotice] = useState<string | null>(null);
+  const shareable = useSyncExternalStore(subscribeShareable, shareableSnapshot, shareableServerSnapshot);
   const [copied, setCopied] = useState(false);
+  const [persistence, setPersistence] = useState<string | null>(null);
 
   async function loadDashboard() {
     const response = await fetch("/api/organizer/rsvps");
@@ -56,6 +71,15 @@ export function OrganizerApp() {
   }
 
   useEffect(() => {
+    void fetch("/api/status")
+      .then((response) => response.json())
+      .then((json: { persistence?: string }) => {
+        if (json.persistence) {
+          setPersistence(json.persistence);
+        }
+      })
+      .catch(() => undefined);
+
     let cancelled = false;
     (async () => {
       try {
@@ -151,6 +175,10 @@ export function OrganizerApp() {
   }
 
   async function copyLink() {
+    if (!shareable) {
+      setError("Questo è l’indirizzo locale: gli invitati non lo aprono. Prima pubblica il sito.");
+      return;
+    }
     await navigator.clipboard.writeText(window.location.origin);
     setCopied(true);
     window.setTimeout(() => setCopied(false), 1800);
@@ -203,6 +231,14 @@ export function OrganizerApp() {
             Qui vedi chi c’è, i vegetariani e quante birre prendere. Il PIN predefinito è <span className="font-medium text-foreground">1309</span>.
           </p>
         </div>
+        {!shareable ? (
+          <div className="rounded-2xl bg-primary/10 px-4 py-3 text-sm leading-6 text-foreground">
+            Questo Preview lo vedi solo tu. Per mandare il modulo in chat serve un link pubblico, gratis, senza comprare un dominio.{" "}
+            <Link href="/pubblica" className="font-medium underline underline-offset-4">
+              Come pubblicarlo
+            </Link>
+          </div>
+        ) : null}
         <form
           onSubmit={login}
           className="rounded-[1.6rem] bg-card px-5 py-6 shadow-[0_18px_50px_-28px_rgba(92,46,21,0.45)] ring-1 ring-foreground/8"
@@ -229,6 +265,10 @@ export function OrganizerApp() {
           </Button>
         </form>
         <p className="text-center text-sm">
+          <Link href="/pubblica" className="text-muted-foreground underline-offset-4 hover:text-foreground hover:underline">
+            Come mandare il link agli invitati
+          </Link>
+          {" · "}
           <Link href="/" className="text-muted-foreground underline-offset-4 hover:text-foreground hover:underline">
             Torna al modulo per gli invitati
           </Link>
@@ -255,6 +295,20 @@ export function OrganizerApp() {
           <p className="text-[0.72rem] font-semibold tracking-[0.28em] text-primary uppercase">Organizzatore</p>
           <h1 className="font-heading mt-2 text-4xl text-balance">{eventForm.title}</h1>
           <p className="mt-2 text-sm text-muted-foreground">Conta le persone, il menu e le birre senza aprire una chat.</p>
+          {!shareable ? (
+            <p className="mt-2 text-sm text-destructive">
+              Non mandare questo indirizzo: è locale.{" "}
+              <Link href="/pubblica" className="underline underline-offset-4">
+                Pubblica il sito
+              </Link>{" "}
+              e poi copia il link .vercel.app.
+            </p>
+          ) : null}
+          {shareable && persistence === "ephemeral" ? (
+            <p className="mt-2 text-sm text-destructive">
+              Le risposte qui possono sparire. Su Vercel crea uno Storage → Blob Store e rifai il deploy.
+            </p>
+          ) : null}
         </div>
         <div className="flex flex-wrap gap-2">
           <Button type="button" variant="outline" className="h-10 rounded-xl" onClick={() => void loadDashboard()}>
@@ -262,7 +316,7 @@ export function OrganizerApp() {
           </Button>
           <Button type="button" variant="outline" className="h-10 rounded-xl" onClick={copyLink}>
             <CopyIcon />
-            {copied ? "Link copiato" : "Copia link invitati"}
+            {copied ? "Link copiato" : shareable ? "Copia link invitati" : "Link ancora locale"}
           </Button>
           <Button type="button" variant="outline" className="h-10 rounded-xl" onClick={downloadCsv} disabled={data.rsvps.length === 0}>
             <DownloadIcon />

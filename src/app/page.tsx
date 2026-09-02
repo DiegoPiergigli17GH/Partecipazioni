@@ -14,6 +14,10 @@ export default async function Home() {
     <main className="flex flex-1 flex-col justify-center py-4">
       <RsvpForm event={toPublicEvent(event)} existing={existing} />
       <p className="mt-10 text-center text-xs text-muted-foreground">
+        <Link href="/pubblica" className="underline-offset-4 hover:text-foreground hover:underline">
+          Come mandare il link
+        </Link>
+        {" · "}
         <Link href="/organizza" className="underline-offset-4 hover:text-foreground hover:underline">
           Sei chi organizza? Apri il riepilogo
         </Link>
