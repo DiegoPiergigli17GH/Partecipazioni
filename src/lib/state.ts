@@ -167,6 +167,7 @@ async function writeToBlob(state: AppState) {
     access: "public",
     allowOverwrite: true,
     addRandomSuffix: false,
+    cacheControlMaxAge: 60,
     contentType: "application/json",
   });
 }
@@ -208,7 +209,7 @@ export async function loadState(): Promise<AppState> {
 
   remember(next);
 
-  if (wantsBlobStore() && next.rsvps.length > (fromBlob?.rsvps.length ?? 0)) {
+  if (wantsBlobStore() && fromBlob === null && next.rsvps.length > 0) {
     try {
       await writeToBlob(next);
       blobOk = true;
