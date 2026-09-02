@@ -26,7 +26,6 @@ export function InvitationHeader() {
           icon={<Clock3Icon className="size-3.5" />}
           label={EVENT.timeLabel}
           value={EVENT.time}
-          note={EVENT.timeNote}
         />
         <div className="glass flex h-full flex-col items-center justify-center rounded-2xl px-3 py-3 text-center">
           <dt className="flex items-center justify-center gap-1.5 font-medium text-foreground/80">
@@ -66,12 +65,10 @@ function InfoBox({
   icon,
   label,
   value,
-  note,
 }: {
   icon: ReactNode
   label: string
   value: string
-  note?: string
 }) {
   return (
     <div className="glass flex h-full flex-col items-center justify-center rounded-2xl px-3 py-3 text-center">
@@ -79,10 +76,7 @@ function InfoBox({
         {icon}
         {label}
       </dt>
-      <dd className="mt-1 font-medium text-balance">
-        {value}
-        {note ? <span className="mt-0.5 block font-medium">{note}</span> : null}
-      </dd>
+      <dd className="mt-1 font-medium text-balance">{value}</dd>
     </div>
   )
 }
