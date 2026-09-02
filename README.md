@@ -1,33 +1,40 @@
 # Pranzo del 13 settembre
 
-Modulo per le partecipazioni di un pranzo, da mandare con un link. Gli invitati dicono se ci sono, se mangiano vegetariano e quante birre bevono. Tu vedi i totali in una pagina riepilogo.
+Modulo per le partecipazioni di un pranzo. Repository: `diego-piergigli17/pranzo-partecipazioni`.
 
-## Il link da mandare
+## Pubblicare su Vercel (il link da mandare)
 
-Il Preview o `localhost` lo vedi solo tu. Gli amici, aprendo quell’indirizzo, non arrivano al modulo.
+L’anteprima di Cursor e `localhost` li vedi solo tu. Per gli invitati serve un indirizzo pubblico, gratis, su [Vercel](https://vercel.com).
 
-Non serve comprare un dominio tipo `www.qualcosa.it` e non serve un server. Si pubblica gratis su [Vercel](https://vercel.com): ottieni un indirizzo `https://….vercel.app` e quello lo mandi in chat.
+1. Account su [vercel.com/signup](https://vercel.com/signup) con Gmail (niente carta).
+2. Sul computer servono [Node.js LTS](https://nodejs.org) e il progetto:
 
-Istruzioni passo passo anche sulla pagina `/pubblica` del sito.
+```bash
+curl -fsSL https://downloads.cursor.com/origin/install.sh | sh
+origin auth login
+origin repo clone diego-piergigli17/pranzo-partecipazioni
+cd pranzo-partecipazioni
+```
 
-1. Registrati su [vercel.com/signup](https://vercel.com/signup) con Gmail (niente carta).
-2. Carica il progetto (Import da GitHub, oppure dal computer):
+3. Pubblica:
 
 ```bash
 npx vercel login
 npx vercel --prod --yes
 ```
 
-3. Nel progetto Vercel: **Storage → Create → Blob Store**, collegalo al sito, poi **Redeploy**. Così le risposte non si perdono.
-4. Mandi la **home** pubblica. Il riepilogo è `/organizza`, PIN `1309`.
+4. Nel progetto su Vercel: **Storage → Create → Blob Store**, collegalo, poi **Redeploy**. Così le risposte restano.
+5. Mandi la **home** `https://….vercel.app`. Il riepilogo è `/organizza`, PIN `1309`.
+
+Stesse istruzioni sulla pagina `/pubblica`.
 
 ## Come si usa, una volta online
 
 1. Manda il link della home agli invitati.
 2. Apri `/organizza` e entra con il PIN **1309**.
-3. Da lì puoi vedere chi c’è, i vegetariani e le birre, copiare il link, scaricare un CSV, aggiornare luogo e orario, cambiare il PIN.
+3. Da lì vedi chi c’è, i vegetariani e le birre, copi il link, scarichi un CSV, aggiorni luogo e orario, cambi il PIN.
 
-Le risposte si possono modificare: chi ha già inviato torna sullo stesso telefono e aggiorna. C’è anche “Rispondi per un’altra persona” se più gente usa lo stesso cellulare.
+Chi ha già risposto può aggiornare dallo stesso telefono. “Rispondi per un’altra persona” serve se più gente usa lo stesso cellulare.
 
 ## Avvio in locale (solo per te)
 
