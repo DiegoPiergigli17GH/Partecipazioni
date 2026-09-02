@@ -196,7 +196,7 @@ export function RsvpForm({ existing }: { existing: Rsvp | null }) {
                 }))
               }
               options={[
-                { value: "yes", label: "Apponi il Sigillo", hint: "aggiungi una coppa" },
+                { value: "yes", label: "Apponi il Sigillo" },
                 { value: "no", label: "Dissolvi l'Incantesimo di evocazione" },
               ]}
             />
