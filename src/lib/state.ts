@@ -139,7 +139,7 @@ async function writeToDisk(state: AppState) {
 async function readFromBlob(): Promise<AppState | null> {
   try {
     const result = await get(BLOB_PATH, {
-      access: "private",
+      access: "public",
       useCache: false,
     });
     if (!result || result.statusCode !== 200 || !result.stream) {
@@ -164,7 +164,7 @@ async function readFromBlob(): Promise<AppState | null> {
 
 async function writeToBlob(state: AppState) {
   await put(BLOB_PATH, JSON.stringify(state), {
-    access: "private",
+    access: "public",
     allowOverwrite: true,
     addRandomSuffix: false,
     contentType: "application/json",
