@@ -52,6 +52,7 @@ export function OrganizerApp() {
   const shareable = useSyncExternalStore(subscribeShareable, shareableSnapshot, shareableServerSnapshot);
   const [copied, setCopied] = useState(false);
   const [persistence, setPersistence] = useState<string | null>(null);
+  const [blobConfigured, setBlobConfigured] = useState<boolean | null>(null);
 
   async function loadDashboard() {
     const response = await fetch("/api/organizer/rsvps");
@@ -73,9 +74,12 @@ export function OrganizerApp() {
   useEffect(() => {
     void fetch("/api/status")
       .then((response) => response.json())
-      .then((json: { persistence?: string }) => {
+      .then((json: { persistence?: string; blobConfigured?: boolean }) => {
         if (json.persistence) {
           setPersistence(json.persistence);
+        }
+        if (typeof json.blobConfigured === "boolean") {
+          setBlobConfigured(json.blobConfigured);
         }
       })
       .catch(() => undefined);
@@ -306,7 +310,9 @@ export function OrganizerApp() {
           ) : null}
           {shareable && persistence === "ephemeral" ? (
             <p className="mt-2 text-sm text-destructive">
-              Le risposte qui possono sparire. Su Vercel crea uno Storage → Blob Store e rifai il deploy.
+              {blobConfigured === false
+                ? "Il Blob non è visibile a questo deploy: le risposte non restano. Collegamento ok, serve un nuovo deploy."
+                : "Le risposte qui non restano: il sito non riesce a scrivere sul Blob."}
             </p>
           ) : null}
         </div>

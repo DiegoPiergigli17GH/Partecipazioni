@@ -14,8 +14,28 @@ const BLOB_PATH = "pranzo-state.json";
 let blobOk: boolean | null = null;
 let memoryState: AppState | null = null;
 
+function envFlag(name: string): string {
+  const value = process.env[name];
+  return typeof value === "string" ? value.trim() : "";
+}
+
+function onVercel(): boolean {
+  return Boolean(envFlag("VERCEL"));
+}
+
 export function wantsBlobStore(): boolean {
-  return Boolean(process.env.BLOB_READ_WRITE_TOKEN || process.env.BLOB_STORE_ID);
+  return Boolean(envFlag("BLOB_READ_WRITE_TOKEN") || envFlag("BLOB_STORE_ID"));
+}
+
+function blobAuth() {
+  const storeId = envFlag("BLOB_STORE_ID");
+  const token = envFlag("BLOB_READ_WRITE_TOKEN");
+  const oidcToken = envFlag("VERCEL_OIDC_TOKEN");
+  return {
+    ...(storeId ? { storeId } : {}),
+    ...(token ? { token } : {}),
+    ...(oidcToken ? { oidcToken } : {}),
+  };
 }
 
 export function currentPersistence(): PersistenceMode {
@@ -25,7 +45,7 @@ export function currentPersistence(): PersistenceMode {
   if (wantsBlobStore() && blobOk !== false) {
     return "blob";
   }
-  if (process.env.VERCEL) {
+  if (onVercel()) {
     return "ephemeral";
   }
   return "file";
@@ -129,7 +149,11 @@ async function writeToDisk(state: AppState) {
 
 async function readFromBlob(): Promise<AppState | null> {
   try {
-    const result = await get(BLOB_PATH, { access: "private", useCache: false });
+    const result = await get(BLOB_PATH, {
+      access: "private",
+      useCache: false,
+      ...blobAuth(),
+    });
     if (!result || result.statusCode !== 200 || !result.stream) {
       return null;
     }
@@ -156,6 +180,7 @@ async function writeToBlob(state: AppState) {
     allowOverwrite: true,
     addRandomSuffix: false,
     contentType: "application/json",
+    ...blobAuth(),
   });
 }
 
@@ -172,8 +197,14 @@ export async function loadState(): Promise<AppState> {
     try {
       fromBlob = await readFromBlob();
       blobOk = true;
-    } catch {
-      blobOk = false;
+    } catch (error) {
+      if (error instanceof BlobNotFoundError) {
+        fromBlob = null;
+        blobOk = true;
+      } else {
+        console.error("Failed to read RSVP blob", error);
+        blobOk = false;
+      }
     }
   }
 
@@ -190,10 +221,12 @@ export async function loadState(): Promise<AppState> {
 
   remember(next);
 
-  if (blobOk === true && next.rsvps.length > (fromBlob?.rsvps.length ?? 0)) {
+  if (wantsBlobStore() && next.rsvps.length > (fromBlob?.rsvps.length ?? 0)) {
     try {
       await writeToBlob(next);
-    } catch {
+      blobOk = true;
+    } catch (error) {
+      console.error("Failed to backfill RSVP blob", error);
       blobOk = false;
     }
   }
@@ -204,22 +237,25 @@ export async function loadState(): Promise<AppState> {
 export async function saveState(state: AppState): Promise<void> {
   remember(state);
 
-  if (wantsBlobStore() && blobOk !== false) {
+  if (wantsBlobStore()) {
     try {
       await writeToBlob(state);
       blobOk = true;
-    } catch {
+    } catch (error) {
       blobOk = false;
+      console.error("Failed to write RSVP blob", error);
+      if (onVercel()) {
+        throw error;
+      }
     }
+  } else if (onVercel()) {
+    throw new Error("Memoria Blob non disponibile sul sito pubblicato.");
   }
 
   try {
     await writeToDisk(state);
   } catch (error) {
     if (blobOk === true) {
-      return;
-    }
-    if (process.env.VERCEL) {
       return;
     }
     throw error;
