@@ -1,12 +1,12 @@
 import type { EventInfo } from "@/lib/types";
 
 export const DEFAULT_EVENT: EventInfo = {
-  title: "Pranzo del 13 settembre",
+  title: "Whimsical Canarian Lunch",
   host: "Diego",
   date: "2026-09-13",
   time: "13:00",
-  place: "",
-  note: "Fammi sapere se ci sei, se mangi vegetariano e quante birre bevi — così organizzo tavolo, menu e spesa senza inseguire messaggi.",
+  place: "Al Castello",
+  note: "E' preferibile lasciare carrozza e destrieri al parcheggio dell'ex Why Not, per non fomentare il caos lungo la via del castello.",
   pin: "1309",
 };
 
