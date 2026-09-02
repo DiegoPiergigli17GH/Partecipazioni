@@ -52,11 +52,14 @@ export function CastleNote() {
   return (
     <div className="glass space-y-3 rounded-[1.6rem] px-5 py-5 text-center text-[0.95rem] font-medium leading-7 text-foreground sm:px-7">
       <p>
-        E&apos; preferibile lasciare carrozza e destrieri al parcheggio
-        dell&apos;ex Why Not, per non fomentare il caos lungo la via del
-        castello.
+        Si invita a lasciar sostare le vostre carrozze e i vostri destrieri
+        presso l&apos;ex Why Not, per non generare oscuri tumulti lungo il
+        sentiero della rocca.
       </p>
-      <p>Chi si presenta a cavallo può stallarlo direttamente in cortile.</p>
+      <p>
+        Chi giungerà a cavallo potrà tuttavia ricoverare il proprio destriero
+        direttamente nel cortile.
+      </p>
     </div>
   )
 }

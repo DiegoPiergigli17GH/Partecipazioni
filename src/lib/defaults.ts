@@ -6,7 +6,7 @@ export const DEFAULT_EVENT: EventInfo = {
   date: "2026-09-13",
   time: "13:00",
   place: "Al Castello",
-  note: "E' preferibile lasciare carrozza e destrieri al parcheggio dell'ex Why Not, per non fomentare il caos lungo la via del castello.",
+  note: "Si invita a lasciar sostare le vostre carrozze e i vostri destrieri presso l'ex Why Not, per non generare oscuri tumulti lungo il sentiero della rocca.",
   pin: "1309",
 };
 
