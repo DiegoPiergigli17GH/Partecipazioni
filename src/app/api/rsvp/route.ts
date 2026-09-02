@@ -23,11 +23,18 @@ export async function POST(request: Request) {
     return Response.json({ error: parsed.error }, { status: 400 });
   }
 
-  const existingId = await readRsvpId();
-  const rsvp = await upsertRsvp(existingId, parsed.value);
-  await setRsvpCookie(rsvp.id);
-
-  return Response.json({ rsvp });
+  try {
+    const existingId = await readRsvpId();
+    const rsvp = await upsertRsvp(existingId, parsed.value);
+    await setRsvpCookie(rsvp.id);
+    return Response.json({ rsvp });
+  } catch (error) {
+    console.error("Failed to save RSVP", error);
+    return Response.json(
+      { error: "Non sono riuscito a salvare la pergamena. Riprova." },
+      { status: 500 },
+    );
+  }
 }
 
 export async function DELETE() {

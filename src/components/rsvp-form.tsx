@@ -11,6 +11,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { MAX_NOTES } from "@/lib/defaults";
+import { publicError, readJson } from "@/lib/http";
 import type { Attendance, Rsvp } from "@/lib/types";
 
 type Diet = "omni" | "veg";
@@ -44,29 +45,49 @@ export function RsvpForm({ existing }: { existing: Rsvp | null }) {
 
   async function onSubmit(e: FormEvent) {
     e.preventDefault();
+    const name = form.name.trim();
+    if (name.length < 2) {
+      setError("Scrivi nome e cognome.");
+      return;
+    }
+    if (!form.attending) {
+      setError("Dimmi se ci sei oppure no.");
+      return;
+    }
+    if (form.attending === "yes" && !form.diet) {
+      setError("Scegli Fauce Draconica o Grazia Druidica.");
+      return;
+    }
+
     setPending(true);
     setError(null);
 
     try {
       const response = await fetch("/api/rsvp", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+        },
         body: JSON.stringify({
-          name: form.name,
+          name,
           attending: form.attending,
           vegetarian: form.diet === "veg",
           beers: form.beers,
           notes: form.notes,
         }),
       });
-      const data = (await response.json()) as { rsvp?: Rsvp; error?: string };
+      const data = await readJson<{ rsvp?: Rsvp; error?: string }>(
+        response,
+        "Invio fallito, riprova.",
+      );
       if (!response.ok || !data.rsvp) {
         throw new Error(data.error || "Invio fallito, riprova.");
       }
       setSaved(data.rsvp);
       setEditing(false);
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Qualcosa è andato storto.");
+      setError(publicError(err, "Invio fallito, riprova."));
     } finally {
       setPending(false);
     }
@@ -133,6 +154,7 @@ export function RsvpForm({ existing }: { existing: Rsvp | null }) {
       <InvitationHeader />
 
       <form
+        noValidate
         onSubmit={onSubmit}
         className="glass rounded-[1.6rem] px-5 py-6 sm:px-7"
       >
@@ -148,9 +170,11 @@ export function RsvpForm({ existing }: { existing: Rsvp | null }) {
             <Label htmlFor="name">Identità Arcanica</Label>
             <Input
               id="name"
-              name="name"
-              required
+              name="guestName"
+              type="text"
               autoComplete="name"
+              autoCapitalize="words"
+              spellCheck={false}
               value={form.name}
               onChange={(event) => setForm((current) => ({ ...current, name: event.target.value }))}
               className="h-11 rounded-xl bg-white/75 px-3 text-base md:text-base"
@@ -211,7 +235,7 @@ export function RsvpForm({ existing }: { existing: Rsvp | null }) {
               maxLength={MAX_NOTES}
               onChange={(event) => setForm((current) => ({ ...current, notes: event.target.value }))}
               className="min-h-24 rounded-xl bg-white/75 px-3 text-base md:text-base"
-              placeholder="Es: intolleranza alle radici, allergia ai grani di mana.."
+              placeholder="Es: intolleranza alle radici, indisposizione al brodo di zoccoli.."
             />
           </div>
 
@@ -236,9 +260,10 @@ export function RsvpForm({ existing }: { existing: Rsvp | null }) {
 
       {seated ? (
         <div className="glass space-y-3 rounded-2xl px-4 py-3 text-center text-sm font-bold leading-6 text-foreground">
-          <p>Siete liberi di portare ciò che volete, ma non è obbligatorio nè necessario.</p>
+          <p>Non bisogna portare nulla, ma siete liberi di farlo.</p>
           <p>Sono gradite misture frizzanti, distillati di mana, decotti spiritati.</p>
           <p>Fiale alle erbe magiche sono permesse e auspicabili.</p>
+          <p>Munitevi dei vostri talismani di carta e delle rune di gioco, per chi vorrà tentare il destino.</p>
         </div>
       ) : null}
     </div>

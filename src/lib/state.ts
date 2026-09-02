@@ -12,6 +12,7 @@ const RSVP_FILE = path.join(DATA_DIR, "rsvps.json");
 const BLOB_PATH = "pranzo-state.json";
 
 let blobOk: boolean | null = null;
+let memoryState: AppState | null = null;
 
 export function wantsBlobStore(): boolean {
   return Boolean(
@@ -123,21 +124,38 @@ async function writeToBlob(state: AppState) {
   });
 }
 
+function remember(state: AppState): AppState {
+  memoryState = {
+    event: sanitizeEvent(state.event),
+    rsvps: Array.isArray(state.rsvps) ? state.rsvps : [],
+  };
+  return memoryState;
+}
+
 export async function loadState(): Promise<AppState> {
   if (wantsBlobStore()) {
     try {
       const state = await readFromBlob();
       blobOk = true;
-      return state;
+      return remember(state);
     } catch {
       blobOk = false;
-      return readFromDisk();
+      if (memoryState) {
+        return memoryState;
+      }
     }
   }
-  return readFromDisk();
+
+  try {
+    return remember(await readFromDisk());
+  } catch {
+    return memoryState ?? emptyState();
+  }
 }
 
 export async function saveState(state: AppState): Promise<void> {
+  remember(state);
+
   if (wantsBlobStore() && blobOk !== false) {
     try {
       await writeToBlob(state);
@@ -147,5 +165,12 @@ export async function saveState(state: AppState): Promise<void> {
       blobOk = false;
     }
   }
-  await writeToDisk(state);
+
+  try {
+    await writeToDisk(state);
+  } catch (error) {
+    if (!wantsBlobStore()) {
+      throw error;
+    }
+  }
 }

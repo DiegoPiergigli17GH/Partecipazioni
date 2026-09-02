@@ -4,6 +4,7 @@ import { useEffect, useId, useState } from "react";
 import { XIcon } from "lucide-react";
 
 import { elixirLabel } from "@/lib/format";
+import { publicError, readJson } from "@/lib/http";
 import type { BanquetEntry } from "@/lib/types";
 
 export function BanquetRegister() {
@@ -26,9 +27,12 @@ export function BanquetRegister() {
 
     let cancelled = false;
     setError(null);
-    void fetch("/api/register")
+    void fetch("/api/register", { headers: { Accept: "application/json" } })
       .then(async (response) => {
-        const data = (await response.json()) as { guests?: BanquetEntry[]; error?: string };
+        const data = await readJson<{ guests?: BanquetEntry[]; error?: string }>(
+          response,
+          "Il registro non si apre.",
+        );
         if (!response.ok || !data.guests) {
           throw new Error(data.error || "Il registro non si apre.");
         }
@@ -41,7 +45,7 @@ export function BanquetRegister() {
       })
       .catch((err: unknown) => {
         if (!cancelled) {
-          setError(err instanceof Error ? err.message : "Il registro non si apre.");
+          setError(publicError(err, "Il registro non si apre."));
         }
       });
 
