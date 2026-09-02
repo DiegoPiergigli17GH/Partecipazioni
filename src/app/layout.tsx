@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Figtree, Fraunces } from "next/font/google";
+import { Cinzel_Decorative, Figtree, Fraunces } from "next/font/google";
 
 import { ParallaxBackground } from "@/components/parallax-background";
 import { ScrollIntro } from "@/components/scroll-intro";
@@ -16,6 +16,12 @@ const heading = Fraunces({
   subsets: ["latin", "latin-ext"],
 });
 
+const scrollTitle = Cinzel_Decorative({
+  variable: "--font-cinzel-scroll",
+  subsets: ["latin"],
+  weight: "700",
+});
+
 export const metadata: Metadata = {
   title: "Whimsical Canarian Lunch",
   description:
@@ -28,7 +34,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
       lang="it"
-      className={`${sans.variable} ${heading.variable} h-full antialiased`}
+      className={`${sans.variable} ${heading.variable} ${scrollTitle.variable} h-full antialiased`}
     >
       <body className="min-h-full">
         <script

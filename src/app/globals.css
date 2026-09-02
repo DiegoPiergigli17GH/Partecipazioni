@@ -150,45 +150,77 @@ html.scroll-intro-seen .scroll-intro {
   position: fixed;
   inset: 0;
   z-index: 80;
-  display: grid;
-  place-items: center;
-  background:
-    radial-gradient(ellipse at 50% 42%, oklch(0.38 0.06 48 / 0.28), transparent 55%),
-    oklch(0.16 0.03 48 / 0.55);
   cursor: pointer;
 }
 
-.scroll-intro.is-fading {
-  animation: scroll-intro-fade 0.9s ease forwards;
-  pointer-events: none;
-}
-
-.scroll-intro-glow {
+.scroll-half {
   position: absolute;
-  width: min(70vw, 420px);
-  height: min(70vw, 420px);
-  border-radius: 999px;
-  background: radial-gradient(circle, oklch(0.72 0.12 70 / 0.28), transparent 68%);
-  animation: scroll-glow 2.6s ease-out both;
-  pointer-events: none;
+  left: 0;
+  right: 0;
+  display: flex;
+  flex-direction: column;
+  height: 52%;
+  transition: transform 2.2s cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: transform;
 }
 
-.scroll-stage {
-  position: relative;
-  display: flex;
-  width: min(92vw, 26rem);
-  flex-direction: column;
-  align-items: center;
-  cursor: default;
-  animation: scroll-settle 0.55s cubic-bezier(0.22, 1, 0.36, 1) both;
+.scroll-half-top {
+  top: 0;
+  justify-content: flex-end;
+}
+
+.scroll-half-bottom {
+  bottom: 0;
+  justify-content: flex-start;
+}
+
+.scroll-intro.is-opening .scroll-half-top {
+  transform: translate3d(0, -105%, 0);
+}
+
+.scroll-intro.is-opening .scroll-half-bottom {
+  transform: translate3d(0, 105%, 0);
+}
+
+.scroll-half-sheet {
+  flex: 1;
+  min-height: 0;
+  background:
+    radial-gradient(ellipse at 18% 12%, oklch(0.98 0.02 85 / 0.55), transparent 46%),
+    radial-gradient(ellipse at 80% 88%, oklch(0.72 0.06 55 / 0.18), transparent 42%),
+    repeating-linear-gradient(
+      0deg,
+      oklch(0.55 0.08 55 / 0.045) 0 1px,
+      transparent 1px 8px
+    ),
+    repeating-linear-gradient(
+      90deg,
+      oklch(0.45 0.06 50 / 0.03) 0 1px,
+      transparent 1px 12px
+    ),
+    linear-gradient(180deg, oklch(0.92 0.04 82), oklch(0.84 0.05 72) 52%, oklch(0.89 0.04 78));
+  box-shadow: inset 0 0 90px oklch(0.4 0.07 50 / 0.14);
+}
+
+.scroll-half-top .scroll-half-sheet {
+  box-shadow:
+    inset 0 -28px 28px -20px oklch(0.28 0.05 48 / 0.35),
+    inset 0 0 90px oklch(0.4 0.07 50 / 0.14);
+}
+
+.scroll-half-bottom .scroll-half-sheet {
+  box-shadow:
+    inset 0 28px 28px -20px oklch(0.28 0.05 48 / 0.35),
+    inset 0 0 90px oklch(0.4 0.07 50 / 0.14);
 }
 
 .scroll-rod {
   position: relative;
   z-index: 2;
-  display: block;
-  width: 108%;
-  height: 1.35rem;
+  flex: 0 0 auto;
+  width: calc(100% - 1.4rem);
+  height: 1.55rem;
+  margin-inline: auto;
   border-radius: 999px;
   background:
     repeating-linear-gradient(
@@ -204,7 +236,7 @@ html.scroll-intro-seen .scroll-intro {
       oklch(0.62 0.09 62)
     );
   box-shadow:
-    0 6px 14px oklch(0.2 0.04 48 / 0.45),
+    0 8px 18px oklch(0.2 0.04 48 / 0.42),
     inset 0 1px 0 oklch(0.92 0.04 85 / 0.45);
 }
 
@@ -212,8 +244,8 @@ html.scroll-intro-seen .scroll-intro {
   position: absolute;
   top: 50%;
   left: -0.55rem;
-  width: 1.15rem;
-  height: 1.15rem;
+  width: 1.25rem;
+  height: 1.25rem;
   border-radius: 999px;
   background: radial-gradient(circle at 30% 30%, oklch(0.72 0.08 70), oklch(0.4 0.08 50));
   transform: translateY(-50%);
@@ -225,146 +257,37 @@ html.scroll-intro-seen .scroll-intro {
   right: -0.55rem;
 }
 
-.scroll-sheet {
-  position: relative;
-  z-index: 1;
-  width: 92%;
-  height: 0.55rem;
-  overflow: hidden;
-  animation: scroll-unroll 1.85s cubic-bezier(0.16, 1, 0.3, 1) 0.42s forwards;
-  box-shadow:
-    inset 0 18px 18px -16px oklch(0.35 0.06 50 / 0.45),
-    inset 0 -14px 16px -12px oklch(0.35 0.06 50 / 0.28);
-}
-
-.scroll-sheet::after {
+.scroll-title-wrap {
   position: absolute;
-  right: 0;
-  bottom: 0;
-  left: 0;
-  height: 2.2rem;
+  inset: 0;
+  z-index: 3;
+  display: grid;
+  place-items: center;
+  padding: 1.25rem;
   pointer-events: none;
-  content: "";
-  background: linear-gradient(180deg, transparent, oklch(0.32 0.06 48 / 0.28));
-  animation: scroll-curl 1.85s cubic-bezier(0.16, 1, 0.3, 1) 0.42s forwards;
-}
-
-.scroll-sheet-inner {
-  position: relative;
-  display: flex;
-  min-height: 18.5rem;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: 2rem 1.5rem 2.1rem;
-  text-align: center;
-  background:
-    radial-gradient(ellipse at 18% 12%, oklch(0.99 0.02 85 / 0.55), transparent 42%),
-    repeating-linear-gradient(
-      0deg,
-      oklch(0.55 0.08 55 / 0.05) 0 1px,
-      transparent 1px 8px
-    ),
-    linear-gradient(180deg, oklch(0.93 0.04 85), oklch(0.86 0.05 75) 48%, oklch(0.9 0.04 80));
-}
-
-.scroll-sheet-inner::before,
-.scroll-sheet-inner::after {
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  width: 1.1rem;
-  content: "";
-  background: linear-gradient(90deg, oklch(0.45 0.08 50 / 0.16), transparent);
-}
-
-.scroll-sheet-inner::after {
-  right: 0;
-  left: auto;
-  background: linear-gradient(270deg, oklch(0.45 0.08 50 / 0.16), transparent);
+  transition:
+    opacity 0.65s ease,
+    transform 0.65s ease;
 }
 
 .scroll-title {
-  font-family: var(--font-heading);
-  font-size: clamp(1.45rem, 5.4vw, 2.05rem);
-  font-weight: 560;
-  line-height: 1.25;
-  letter-spacing: 0.08em;
-  color: oklch(0.3 0.04 48);
+  margin: 0;
+  padding: 1.35rem 1.6rem 1.45rem;
+  text-align: center;
+  font-family: var(--font-cinzel-scroll), "Times New Roman", serif;
+  font-size: clamp(1.7rem, 6.2vw, 3.35rem);
+  font-weight: 700;
+  line-height: 1.28;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: oklch(0.27 0.05 48);
+  text-shadow: 0 1px 0 oklch(0.97 0.02 85 / 0.55);
+  background: oklch(0.88 0.045 78);
 }
 
-.scroll-seal {
-  position: absolute;
-  top: 0.15rem;
-  left: 50%;
-  z-index: 4;
-  width: 4.4rem;
-  height: 4.4rem;
-  translate: -50% 0;
-  animation: scroll-seal 0.7s ease 0.28s forwards;
-  filter: drop-shadow(0 8px 10px oklch(0.2 0.05 30 / 0.45));
-}
-
-.scroll-seal-svg {
-  display: block;
-  width: 100%;
-  height: 100%;
-}
-
-@keyframes scroll-settle {
-  from {
-    opacity: 0;
-    transform: translateY(10px) scale(0.96);
-  }
-  to {
-    opacity: 1;
-    transform: none;
-  }
-}
-
-@keyframes scroll-unroll {
-  to {
-    height: 18.5rem;
-  }
-}
-
-@keyframes scroll-curl {
-  0%,
-  78% {
-    opacity: 1;
-  }
-  to {
-    opacity: 0;
-  }
-}
-
-@keyframes scroll-seal {
-  to {
-    opacity: 0;
-    transform: scale(1.35) rotate(14deg);
-    filter: drop-shadow(0 0 0 transparent);
-  }
-}
-
-@keyframes scroll-glow {
-  from {
-    opacity: 0;
-    transform: scale(0.7);
-  }
-  40% {
-    opacity: 1;
-  }
-  to {
-    opacity: 0.55;
-    transform: scale(1.08);
-  }
-}
-
-@keyframes scroll-intro-fade {
-  to {
-    opacity: 0;
-    visibility: hidden;
-  }
+.scroll-intro.is-opening .scroll-title-wrap {
+  opacity: 0;
+  transform: scale(0.96);
 }
 
 @media (prefers-reduced-motion: reduce) {

@@ -44,3 +44,13 @@ export function beerLabel(count: number): string {
   }
   return `${count} birre`;
 }
+
+export function elixirLabel(count: number): string {
+  if (count === 0) {
+    return "nessun elisir";
+  }
+  if (count === 1) {
+    return "1 elisir";
+  }
+  return `${count} elisir`;
+}

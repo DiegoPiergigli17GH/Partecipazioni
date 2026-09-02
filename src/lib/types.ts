@@ -49,3 +49,9 @@ export type AppState = {
 };
 
 export type PersistenceMode = "file" | "blob" | "ephemeral";
+
+export type BanquetEntry = {
+  name: string;
+  vegetarian: boolean;
+  beers: number;
+};

@@ -1,5 +1,5 @@
 import { currentPersistence, loadState, saveState, sanitizeEvent } from "@/lib/state";
-import type { EventPatch, PersistenceMode, PublicEvent, Rsvp, RsvpInput, Totals } from "@/lib/types";
+import type { BanquetEntry, EventPatch, PersistenceMode, PublicEvent, Rsvp, RsvpInput, Totals } from "@/lib/types";
 
 let queue: Promise<unknown> = Promise.resolve();
 
@@ -88,6 +88,18 @@ export async function deleteRsvp(id: string): Promise<boolean> {
     await saveState(state);
     return true;
   });
+}
+
+export async function listBanquetEntries(): Promise<BanquetEntry[]> {
+  const rows = await listRsvps();
+  return rows
+    .filter((row) => row.attending === "yes")
+    .sort((a, b) => a.createdAt.localeCompare(b.createdAt))
+    .map((row) => ({
+      name: row.name,
+      vegetarian: row.vegetarian,
+      beers: row.beers,
+    }));
 }
 
 export function summarize(rsvps: Rsvp[]): Totals {
