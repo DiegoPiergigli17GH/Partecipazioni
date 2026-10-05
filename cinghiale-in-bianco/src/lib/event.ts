@@ -8,6 +8,6 @@ export const EVENT = {
   timeLabel: "Orario",
   time: "Ore 18:00, al calar del sole",
   whereLabel: "Dove",
-  where: "Nella Radura dello Stregone",
+  where: "Nel Sottobosco",
   mapsUrl: "https://maps.app.goo.gl/NH5sBnWtmN3SXt5c9",
 } as const

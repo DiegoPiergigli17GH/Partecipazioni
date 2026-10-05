@@ -5,7 +5,7 @@ export const DEFAULT_EVENT: EventInfo = {
   host: "Diego",
   date: "2026-10-18",
   time: "18:00",
-  place: "Nella Radura dello Stregone",
+  place: "Nel Sottobosco",
   note: "Si invita a lasciar riposare carrozze e destrieri presso l'ex Why Not: il sentiero della rocca è terra dei cinghiali selvatici, che non amano essere disturbati.",
   pin: "1309",
 };
