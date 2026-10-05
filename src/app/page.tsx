@@ -12,7 +12,7 @@ export default async function Home() {
     <main className="flex flex-1 flex-col justify-center py-4">
       <RsvpForm existing={existing} />
       <p className="mx-auto mt-10 max-w-xl text-center text-sm font-bold text-white [text-shadow:0_1px_10px_rgba(0,0,0,0.55)]">
-        Le mancate risposte verranno giudicate dal Consiglio dei Cinghiali Selvatici
+        Le mancate risposte verranno giudicate dal Consiglio degli Gnomi xenofobi
       </p>
       <BanquetRegister />
     </main>

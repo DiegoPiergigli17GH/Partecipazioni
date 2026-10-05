@@ -261,9 +261,9 @@ export function RsvpForm({ existing }: { existing: Rsvp | null }) {
       {seated ? (
         <div className="glass space-y-3 rounded-2xl px-4 py-3 text-center text-sm font-bold leading-6 text-foreground">
           <p>Non bisogna portare nulla, ma siete liberi di farlo.</p>
-          <p>Sono graditi calici di rosso, nocino, liquori di castagna e distillati di sottobosco.</p>
-          <p>Funghi, castagne e frutti d&apos;autunno troveranno sempre posto in tavola.</p>
-          <p>Telefoni e notizie dei tempi moderni restino al limitare del bosco.</p>
+          <p>Sono graditi fuochi fatui, nocino, liquori di castagna e distillati di sottobosco.</p>
+          <p>Funghi, castagne e fiale d&apos;erbe e resine troveranno sempre posto in tavola.</p>
+          <p>Si prega di non sorvolare il bosco in idrovolante: gli gnomi potrebbero fondare un Cargo Cult in vostro onore.</p>
           <p>Munitevi di carte e dadi, per chi vorrà sfidare il destino davanti al fuoco.</p>
         </div>
       ) : null}

@@ -18,7 +18,7 @@ const heading = Fraunces({
 export const metadata: Metadata = {
   title: "L'era del cinghiale in bianco",
   description:
-    "Banchetto d'autunno nel bosco. Che torni presto l'era del cinghiale in bianco.",
+    "Banchetto d'autunno selvatico. Lo Stregone mescola il paiolo, il bosco apparecchia la tavola: a voi basta l'appetito.",
   robots: { index: false, follow: false },
   icons: { icon: "/favicon.svg" },
 };

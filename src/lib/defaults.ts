@@ -4,9 +4,9 @@ export const DEFAULT_EVENT: EventInfo = {
   title: "L'era del cinghiale in bianco",
   host: "Diego",
   date: "2026-10-18",
-  time: "18:00",
+  time: "13:00",
   place: "Nel Sottobosco",
-  note: "Si invita a lasciar riposare carrozze e destrieri presso l'ex Why Not: il sentiero della rocca è terra dei cinghiali selvatici, che non amano essere disturbati.",
+  note: "Si invita a lasciar riposare carrozze e destrieri un po' distante dal sottobosco: il sentiero della rocca è terra dei cinghiali selvatici, che non amano essere disturbati.",
   pin: "1309",
 };
 
