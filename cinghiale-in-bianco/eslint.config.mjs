@@ -12,8 +12,6 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
-    // Seconda app, con configurazione propria.
-    "cinghiale-in-bianco/**",
   ]),
 ]);
 
