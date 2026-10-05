@@ -18,7 +18,7 @@ const heading = Fraunces({
 export const metadata: Metadata = {
   title: "L'era del cinghiale in bianco",
   description:
-    "Si apre una nuova era. Niente pomodoro, niente scuse: il cinghiale si presenta in bianco.",
+    "Banchetto d'autunno nel bosco. Che torni presto l'era del cinghiale in bianco.",
   robots: { index: false, follow: false },
   icons: { icon: "/favicon.svg" },
 };

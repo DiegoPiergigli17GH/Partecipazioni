@@ -1,12 +1,12 @@
 export const EVENT = {
-  kicker: "Si apre una nuova era",
+  kicker: "Banchetto d'autunno nel bosco",
   title: "L'era del cinghiale in bianco",
   subtitle:
-    "Niente pomodoro, niente scuse: il cinghiale si presenta in bianco",
+    "Spero che ritorni presto l'era del cinghiale in bianco. Nel frattempo, lo Stregone è al paiolo",
   whenLabel: "Quando",
   when: "Data da annunciare",
   timeLabel: "Orario",
-  time: "Dallo Zenith",
+  time: "Al primo fumo del paiolo",
   whereLabel: "Dove",
   where: "Al Castello",
   mapsUrl: "https://maps.app.goo.gl/NH5sBnWtmN3SXt5c9",

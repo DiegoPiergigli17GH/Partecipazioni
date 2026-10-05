@@ -55,7 +55,7 @@ export function RsvpForm({ existing }: { existing: Rsvp | null }) {
       return;
     }
     if (form.attending === "yes" && !form.diet) {
-      setError("Scegli Fauce Draconica o Grazia Druidica.");
+      setError("Scegli Spirito Selvatico o Anima del Sottobosco.");
       return;
     }
 
@@ -124,8 +124,8 @@ export function RsvpForm({ existing }: { existing: Rsvp | null }) {
             <div>
               <p className="text-sm leading-6">
                 {saved.attending === "yes"
-                  ? "Pergamena spedita. Nome tracciato nel Registro del Banchetto."
-                  : "Incantesimo di evocazione dissolto."}
+                  ? "Messaggio consegnato allo Stregone. Il tuo posto a tavola è segnato."
+                  : "Ti sei perso nel bosco. Il paiolo resterà acceso lo stesso."}
               </p>
               <div className="mt-4 flex flex-col gap-2 sm:flex-row">
                 <Button type="button" className="h-11 flex-1 rounded-xl" onClick={() => setEditing(true)}>
@@ -159,15 +159,15 @@ export function RsvpForm({ existing }: { existing: Rsvp | null }) {
         className="glass rounded-[1.6rem] px-5 py-6 sm:px-7"
       >
         <div className="mb-6">
-          <h2 className="font-heading text-2xl">Rispondi alla Convocazione</h2>
+          <h2 className="font-heading text-2xl">Rispondi al Richiamo del Bosco</h2>
           <p className="mt-1 text-sm font-medium text-foreground/85">
-            Compila la pergamena per tracciare il tuo nome nel Registro del Banchetto
+            Incidi il tuo nome sulla corteccia e prendi posto alla tavola dello Stregone
           </p>
         </div>
 
         <div className="space-y-6">
           <div className="space-y-2">
-            <Label htmlFor="name">Identità Arcanica</Label>
+            <Label htmlFor="name">Nome del viandante</Label>
             <Input
               id="name"
               name="guestName"
@@ -178,14 +178,14 @@ export function RsvpForm({ existing }: { existing: Rsvp | null }) {
               value={form.name}
               onChange={(event) => setForm((current) => ({ ...current, name: event.target.value }))}
               className="h-11 rounded-xl bg-white/75 px-3 text-base md:text-base"
-              placeholder="Es. Divino Otelma"
+              placeholder="Es. Marco Pagot"
             />
           </div>
 
           <div className="space-y-2">
-            <Label>Convocazione</Label>
+            <Label>Il Richiamo</Label>
             <ChoiceCards
-              name="Convocazione"
+              name="Il Richiamo"
               value={form.attending}
               onChange={(attending) =>
                 setForm((current) => ({
@@ -196,8 +196,8 @@ export function RsvpForm({ existing }: { existing: Rsvp | null }) {
                 }))
               }
               options={[
-                { value: "yes", label: "Apponi il Sigillo" },
-                { value: "no", label: "Dissolvi l'Incantesimo di evocazione" },
+                { value: "yes", label: "Prendo posto a tavola" },
+                { value: "no", label: "Mi perdo nel bosco" },
               ]}
             />
           </div>
@@ -205,20 +205,20 @@ export function RsvpForm({ existing }: { existing: Rsvp | null }) {
           {seated ? (
             <>
               <div className="space-y-2">
-                <Label>Specifiche Alchemiche</Label>
+                <Label>Indole a tavola</Label>
                 <ChoiceCards
-                  name="Specifiche Alchemiche"
+                  name="Indole a tavola"
                   value={form.diet}
                   onChange={(diet) => setForm((current) => ({ ...current, diet }))}
                   options={[
-                    { value: "omni", label: "Fauce Draconica", hint: "mangia di tutto" },
-                    { value: "veg", label: "Grazia Druidica", hint: "solo vegetale" },
+                    { value: "omni", label: "Spirito Selvatico", hint: "mangia di tutto" },
+                    { value: "veg", label: "Anima del Sottobosco", hint: "solo vegetale" },
                   ]}
                 />
               </div>
 
               <div className="space-y-2">
-                <Label>Elisir di Godog</Label>
+                <Label>Pozioni di luppolo</Label>
                 <BeerStepper
                   value={form.beers}
                   onChange={(beers) => setForm((current) => ({ ...current, beers }))}
@@ -228,14 +228,14 @@ export function RsvpForm({ existing }: { existing: Rsvp | null }) {
           ) : null}
 
           <div className="space-y-2">
-            <Label htmlFor="notes">Note: Restrizioni Arcane & Vettovaglie</Label>
+            <Label htmlFor="notes">Note: allergie, intolleranze e tabù del bosco</Label>
             <Textarea
               id="notes"
               value={form.notes}
               maxLength={MAX_NOTES}
               onChange={(event) => setForm((current) => ({ ...current, notes: event.target.value }))}
               className="min-h-24 rounded-xl bg-white/75 px-3 text-base md:text-base"
-              placeholder="Es: intolleranza alle radici, indisposizione al brodo di zoccoli.."
+              placeholder="Es: diffidenza verso i finferli, allergia ai sermoni sui tempi moderni.."
             />
           </div>
 
@@ -251,7 +251,7 @@ export function RsvpForm({ existing }: { existing: Rsvp | null }) {
             disabled={pending || !form.attending || (seated && !form.diet)}
           >
             {pending ? <Loader2Icon className="animate-spin" /> : null}
-            Spedisci la pergamena
+            Consegna allo Stregone
           </Button>
         </div>
       </form>
@@ -261,9 +261,10 @@ export function RsvpForm({ existing }: { existing: Rsvp | null }) {
       {seated ? (
         <div className="glass space-y-3 rounded-2xl px-4 py-3 text-center text-sm font-bold leading-6 text-foreground">
           <p>Non bisogna portare nulla, ma siete liberi di farlo.</p>
-          <p>Sono gradite misture frizzanti, distillati di mana, decotti spiritati.</p>
-          <p>Fiale alle erbe magiche sono permesse e auspicabili.</p>
-          <p>Munitevi dei vostri talismani di carta e delle rune di gioco, per chi vorrà tentare il destino.</p>
+          <p>Sono graditi calici di rosso, nocino, liquori di castagna e distillati di sottobosco.</p>
+          <p>Funghi, castagne e frutti d&apos;autunno troveranno sempre posto in tavola.</p>
+          <p>Telefoni e notizie dei tempi moderni restino al limitare del bosco.</p>
+          <p>Munitevi di carte e dadi, per chi vorrà sfidare il destino davanti al fuoco.</p>
         </div>
       ) : null}
     </div>

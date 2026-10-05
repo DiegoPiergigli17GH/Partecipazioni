@@ -19,13 +19,13 @@ export function BeerStepper({
         className="size-11 rounded-xl bg-white/70"
         onClick={() => onChange(Math.max(0, value - 1))}
         disabled={value <= 0}
-        aria-label="Togli una boccetta"
+        aria-label="Togli un boccale"
       >
         <MinusIcon />
       </Button>
       <div className="min-w-28 text-center">
         <p className="font-heading text-3xl leading-none tabular-nums">{value}</p>
-        <p className="mt-1 text-xs font-medium text-foreground/80">Boccette luppolate</p>
+        <p className="mt-1 text-xs font-medium text-foreground/80">Boccali spumeggianti</p>
       </div>
       <Button
         type="button"
@@ -34,7 +34,7 @@ export function BeerStepper({
         className="size-11 rounded-xl bg-white/70"
         onClick={() => onChange(Math.min(MAX_BEERS, value + 1))}
         disabled={value >= MAX_BEERS}
-        aria-label="Aggiungi una boccetta"
+        aria-label="Aggiungi un boccale"
       >
         <PlusIcon />
       </Button>

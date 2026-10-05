@@ -61,7 +61,7 @@ export function BanquetRegister() {
         type="button"
         aria-expanded={open}
         aria-controls={open ? titleId : undefined}
-        aria-label="Apri il Registro del Banchetto"
+        aria-label="Apri il Registro della Tavola"
         onClick={() => setOpen(true)}
         className="glass fixed right-3 bottom-3 z-20 flex items-end gap-1 rounded-2xl px-2 py-1.5 transition hover:scale-105 focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none sm:right-5 sm:bottom-5"
       >
@@ -85,7 +85,7 @@ export function BanquetRegister() {
           >
             <div className="mb-5 flex items-start justify-between gap-3">
               <h2 id={titleId} className="font-heading text-2xl">
-                Registro del Banchetto
+                Registro della Tavola
               </h2>
               <button
                 type="button"
@@ -102,10 +102,10 @@ export function BanquetRegister() {
                 {error}
               </p>
             ) : guests === null ? (
-              <p className="text-sm font-medium text-foreground/80">Si stanno consultando le pergamene…</p>
+              <p className="text-sm font-medium text-foreground/80">Lo Stregone consulta il registro…</p>
             ) : guests.length === 0 ? (
               <p className="text-sm font-medium text-foreground/80">
-                Nessuna presenza annotata. Il registro attende la prima pergamena.
+                Nessun nome ancora inciso. La tavola attende il primo viandante.
               </p>
             ) : (
               <ul className="max-h-[min(24rem,60vh)] space-y-2 overflow-y-auto">
