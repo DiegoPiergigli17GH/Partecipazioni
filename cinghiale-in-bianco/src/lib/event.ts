@@ -4,10 +4,10 @@ export const EVENT = {
   subtitle:
     "Spero che ritorni presto l'era del cinghiale in bianco. Nel frattempo, lo Stregone è al paiolo",
   whenLabel: "Quando",
-  when: "Data da annunciare",
+  when: "Domenica 18 Ottobre 2026",
   timeLabel: "Orario",
-  time: "Al primo fumo del paiolo",
+  time: "Ore 18:00, al calar del sole",
   whereLabel: "Dove",
-  where: "Al Castello",
+  where: "Nella Radura dello Stregone",
   mapsUrl: "https://maps.app.goo.gl/NH5sBnWtmN3SXt5c9",
 } as const
