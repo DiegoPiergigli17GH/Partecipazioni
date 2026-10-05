@@ -2,7 +2,7 @@
 
 Modulo per le partecipazioni al banchetto d'autunno nel bosco: domenica 18 ottobre 2026, ore 18:00.
 
-La versione precedente, *Whimsical Canarian Lunch* (13 settembre), è conservata nella storia della repo con l'etichetta `whimsical-canarian-lunch`.
+La versione precedente, *Whimsical Canarian Lunch* (13 settembre), resta intatta nel ramo `pranzo-13-settembre` della repo.
 
 ## Come si usa, una volta online
 
