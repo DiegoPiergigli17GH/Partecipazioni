@@ -12,8 +12,6 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
-    // Il pranzo precedente, app completa con configurazione propria.
-    "whimsical-canarian-lunch/**",
   ]),
 ]);
 
