@@ -16,9 +16,9 @@ const heading = Fraunces({
 });
 
 export const metadata: Metadata = {
-  title: "Whimsical Canarian Lunch",
+  title: "L'era del cinghiale in bianco",
   description:
-    "I cast end of summer banquet. Requires zero mana, just bring your appetite.",
+    "Banchetto d'autunno nel bosco. Che torni presto l'era del cinghiale in bianco.",
   robots: { index: false, follow: false },
   icons: { icon: "/favicon.svg" },
 };

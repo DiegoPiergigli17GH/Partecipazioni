@@ -1,17 +1,17 @@
 import type { EventInfo } from "@/lib/types";
 
 export const DEFAULT_EVENT: EventInfo = {
-  title: "Whimsical Canarian Lunch",
+  title: "L'era del cinghiale in bianco",
   host: "Diego",
-  date: "2026-09-13",
-  time: "13:00",
-  place: "Al Castello",
-  note: "Si invita a lasciar sostare le vostre carrozze e i vostri destrieri presso l'ex Why Not, per non generare oscuri tumulti lungo il sentiero della rocca.",
+  date: "2026-10-18",
+  time: "18:00",
+  place: "Nel Sottobosco",
+  note: "Si invita a lasciar riposare carrozze e destrieri presso l'ex Why Not: il sentiero della rocca è terra dei cinghiali selvatici, che non amano essere disturbati.",
   pin: "1309",
 };
 
-export const RSVP_COOKIE = "pranzo_rsvp_id";
-export const ORGANIZER_COOKIE = "pranzo_organizer";
+export const RSVP_COOKIE = "cinghiale_rsvp_id";
+export const ORGANIZER_COOKIE = "cinghiale_organizer";
 export const MAX_BEERS = 10;
 export const MAX_NAME = 80;
 export const MAX_NOTES = 400;

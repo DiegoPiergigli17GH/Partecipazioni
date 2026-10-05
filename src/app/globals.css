@@ -56,7 +56,7 @@
   --card-foreground: oklch(0.3 0.04 48);
   --popover: oklch(0.985 0.01 85);
   --popover-foreground: oklch(0.3 0.04 48);
-  --primary: oklch(0.5 0.13 42);
+  --primary: oklch(0.47 0.14 38);
   --primary-foreground: oklch(0.985 0.02 85);
   --secondary: oklch(0.93 0.03 85);
   --secondary-foreground: oklch(0.34 0.05 48);
@@ -67,8 +67,8 @@
   --destructive: oklch(0.55 0.18 28);
   --border: oklch(0.86 0.03 70);
   --input: oklch(0.86 0.03 70);
-  --ring: oklch(0.58 0.12 42);
-  --chart-1: oklch(0.5 0.13 42);
+  --ring: oklch(0.55 0.13 38);
+  --chart-1: oklch(0.47 0.14 38);
   --chart-2: oklch(0.55 0.08 130);
   --chart-3: oklch(0.7 0.1 75);
   --chart-4: oklch(0.45 0.06 50);
@@ -76,12 +76,12 @@
   --radius: 0.9rem;
   --sidebar: oklch(0.985 0.01 85);
   --sidebar-foreground: oklch(0.3 0.04 48);
-  --sidebar-primary: oklch(0.5 0.13 42);
+  --sidebar-primary: oklch(0.47 0.14 38);
   --sidebar-primary-foreground: oklch(0.985 0.02 85);
   --sidebar-accent: oklch(0.93 0.035 130);
   --sidebar-accent-foreground: oklch(0.32 0.05 130);
   --sidebar-border: oklch(0.86 0.03 70);
-  --sidebar-ring: oklch(0.58 0.12 42);
+  --sidebar-ring: oklch(0.55 0.13 38);
 }
 
 @layer base {
@@ -125,7 +125,8 @@
   height: 160%;
   max-width: none;
   object-fit: cover;
-  object-position: center top;
+  /* Su schermi larghi tiene in vista il Cinghiale Bianco e lo Stregone. */
+  object-position: center 65%;
   transform: translate3d(-50%, calc(var(--scroll-p, 0) * -55vh), 0);
   will-change: transform;
 }
