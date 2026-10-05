@@ -66,7 +66,7 @@ export function BanquetRegister() {
         className="glass fixed right-3 bottom-3 z-20 flex items-end gap-1 rounded-2xl px-2 py-1.5 transition hover:scale-105 focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none sm:right-5 sm:bottom-5"
       >
         <ParchmentMark />
-        <WizardHatMark />
+        <AmanitaMark />
       </button>
 
       {open ? (
@@ -153,16 +153,20 @@ function ParchmentMark() {
   );
 }
 
-function WizardHatMark() {
+function AmanitaMark() {
   return (
     <svg viewBox="0 0 32 32" className="size-7" aria-hidden>
-      <ellipse cx="16" cy="25.2" rx="11" ry="3.2" fill="#2b2158" />
-      <path d="M16 3.4 6.8 23.4h18.4L16 3.4Z" fill="#3d2d78" />
-      <path d="M16 3.4 11.2 23.4h4.8V3.4Z" fill="#5340a0" />
-      <path
-        d="M19.2 11.2 20.6 13l2.1-.4-1.3 1.8 1.2 1.9-2.1-.7-1.3 1.8.1-2.2-2-.9 2.1-.8Z"
-        fill="#f0c14b"
-      />
+      <path d="M13.2 17.5h5.6l.9 9.2c0 1.3-1.7 1.9-3.7 1.9s-3.7-.6-3.7-1.9l.9-9.2Z" fill="#f6efe2" stroke="#cdbb9b" strokeWidth="0.8" />
+      <path d="M12.7 20.4c1.4.9 5.2.9 6.6 0l-.2 1.7c-1.3.7-4.9.7-6.2 0l-.2-1.7Z" fill="#e4d8c3" />
+      <path d="M3.5 17.4C3.5 10 9.1 4.6 16 4.6S28.5 10 28.5 17.4c0 1-.8 1.6-1.8 1.6H5.3c-1 0-1.8-.6-1.8-1.6Z" fill="#cf2a1e" />
+      <path d="M6.6 12.6c1.7-3.9 5.1-6.2 9.4-6.3" stroke="#ec5b46" strokeWidth="1.3" strokeLinecap="round" fill="none" />
+      <circle cx="10.4" cy="10.6" r="1.6" fill="#fbf6ec" />
+      <circle cx="16.6" cy="8.4" r="1.3" fill="#fbf6ec" />
+      <circle cx="22.2" cy="11.2" r="1.7" fill="#fbf6ec" />
+      <circle cx="7.6" cy="15.6" r="1.1" fill="#fbf6ec" />
+      <circle cx="14.2" cy="13.6" r="1.4" fill="#fbf6ec" />
+      <circle cx="20" cy="15.8" r="1.2" fill="#fbf6ec" />
+      <circle cx="25.4" cy="15.6" r="1" fill="#fbf6ec" />
     </svg>
   );
 }
