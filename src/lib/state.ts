@@ -9,7 +9,7 @@ const DATA_DIR = path.join(process.cwd(), "data");
 const STATE_FILE = path.join(DATA_DIR, "state.json");
 const EVENT_FILE = path.join(DATA_DIR, "event.json");
 const RSVP_FILE = path.join(DATA_DIR, "rsvps.json");
-const BLOB_PATH = "pranzo-state.json";
+const BLOB_PATH = "cinghiale-state.json";
 
 let blobOk: boolean | null = null;
 let memoryState: AppState | null = null;

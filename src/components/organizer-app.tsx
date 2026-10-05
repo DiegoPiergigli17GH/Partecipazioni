@@ -211,7 +211,7 @@ export function OrganizerApp() {
     const url = URL.createObjectURL(blob);
     const anchor = document.createElement("a");
     anchor.href = url;
-    anchor.download = "partecipazioni-pranzo.csv";
+    anchor.download = "partecipazioni-cinghiale.csv";
     anchor.click();
     URL.revokeObjectURL(url);
   }

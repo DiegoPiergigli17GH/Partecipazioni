@@ -1,13 +1,13 @@
 export const EVENT = {
-  kicker: "I cast end of summer banquet",
-  title: "Whimsical Canarian Lunch",
+  kicker: "Banchetto d'autunno nel bosco",
+  title: "L'era del cinghiale in bianco",
   subtitle:
-    "Requires zero mana, just bring your appetite, I'll summon everything else",
+    "Spero che ritorni presto l'era del cinghiale in bianco. Nel frattempo, lo Stregone è al paiolo",
   whenLabel: "Quando",
-  when: "Domenica 13 Settembre 2026",
+  when: "Domenica 18 Ottobre 2026",
   timeLabel: "Orario",
-  time: "Dallo Zenith",
+  time: "Ore 18:00, al calar del sole",
   whereLabel: "Dove",
-  where: "Al Castello",
+  where: "Nel Sottobosco",
   mapsUrl: "https://maps.app.goo.gl/NH5sBnWtmN3SXt5c9",
 } as const

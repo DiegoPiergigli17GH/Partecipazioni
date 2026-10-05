@@ -31,7 +31,7 @@ export async function POST(request: Request) {
   } catch (error) {
     console.error("Failed to save RSVP", error);
     return Response.json(
-      { error: "Non sono riuscito a salvare la pergamena. Riprova." },
+      { error: "Non sono riuscito a consegnare il messaggio. Riprova." },
       { status: 500 },
     );
   }

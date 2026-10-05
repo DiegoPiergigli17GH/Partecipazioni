@@ -31,7 +31,7 @@ export function ParallaxBackground() {
     >
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img
-        src="/whimsical-canarian-lunch.jpg"
+        src="/cinghiale-in-bianco.jpg"
         alt=""
         className="parallax-art"
       />

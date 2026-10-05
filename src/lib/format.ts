@@ -47,10 +47,10 @@ export function beerLabel(count: number): string {
 
 export function elixirLabel(count: number): string {
   if (count === 0) {
-    return "nessun elisir";
+    return "nessun boccale";
   }
   if (count === 1) {
-    return "1 elisir";
+    return "1 boccale";
   }
-  return `${count} elisir`;
+  return `${count} boccali`;
 }
